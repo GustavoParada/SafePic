@@ -1,9 +1,9 @@
 ﻿using SharePic.Domain.Commands;
 using MediatR;
-using Project.Domain.Core.Bus;
 using System.Threading;
 using System.Threading.Tasks;
 using SharePic.Domain.Events;
+using Domain.Core.Bus;
 
 namespace SharePic.Domain.EventHandlers
 {

@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using Domain.Core.Bus;
+using Domain.Core.Commands;
+using Domain.Core.Entities;
+using Domain.Core.Events;
+using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Project.Domain.Core.Bus;
-using Project.Domain.Core.Commands;
-using Project.Domain.Core.Entities;
-using Project.Domain.Core.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System;
@@ -23,6 +24,8 @@ namespace Infra.Bus
         private readonly List<Type> _eventTypes;
         private readonly IServiceScopeFactory _serviceScopeFactory;
 
+        private RabbitMQSettings _rabbitMQSettings;
+
         public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory)
         {
             _mediator = mediator;
@@ -30,6 +33,7 @@ namespace Infra.Bus
             _eventTypes = new List<Type>();
             _serviceScopeFactory = serviceScopeFactory;
         }
+
         public Task SendCommand<T>(T command) where T : Command
         {
             return _mediator.Send(command);
@@ -37,9 +41,13 @@ namespace Infra.Bus
 
         public void Publish<T>(T @event) where T : Event
         {
-            //var config = _configuration.GetSection("AppSettings").Get<AppSettings>();
-
-            var factory = new ConnectionFactory() { HostName = "dupa.com.br", UserName = "userRabbit", Password = "12345" };
+            _rabbitMQSettings = new RabbitMQSettings()
+            {
+                Host = "dupa.pt",
+                Password = "12345",
+                UserName = "userRabbit"
+            };
+            var factory = new ConnectionFactory() { HostName = _rabbitMQSettings.Host, UserName = _rabbitMQSettings.UserName, Password = _rabbitMQSettings.Password };
 
             using (var connection = factory.CreateConnection())
             {
@@ -119,14 +127,14 @@ namespace Infra.Bus
             {
                 await ProcessEvent(eventName, message).ConfigureAwait(false);
             }
-            catch 
+            catch
             {
 
                 throw;
             }
         }
 
-        private async  Task ProcessEvent(string eventName, string message)
+        private async Task ProcessEvent(string eventName, string message)
         {
             if (_handlers.ContainsKey(eventName))
             {

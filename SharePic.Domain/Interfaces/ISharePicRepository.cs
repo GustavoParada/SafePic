@@ -1,9 +1,10 @@
 ﻿using SharePic.Domain.Models;
+using System.Threading.Tasks;
 
 namespace SharePic.Domain.Interfaces
 {
     public interface ISharePicRepository
     {
-        void RegisterShare(SharedPic picShared);
+        Task RegisterShare(SharedPic picShared);
     }
 }

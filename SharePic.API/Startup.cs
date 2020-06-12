@@ -1,9 +1,11 @@
-﻿using Infra.IoC;
+﻿using Domain.Core.Entities;
+using Infra.IoC;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 
@@ -55,7 +57,14 @@ namespace SharePic.API
                         Url = new Uri("https://example.com/license"),
                     }
                 });
-                //c.OperationFilter<ExamplesOperationFilter>();
+
+                services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+                services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQSettings"));
+                services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings"));
+
+                services.AddSingleton<IMongoDbSettings>(serviceProvider =>
+                    serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
+
             });
 
             services.AddMediatR(typeof(Startup));
@@ -67,6 +76,7 @@ namespace SharePic.API
         private static void RegisterServices(IServiceCollection services)
         {
             DependencyContainer.RegisterServices(services);
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,4 +111,5 @@ namespace SharePic.API
 
         }
     }
+
 }

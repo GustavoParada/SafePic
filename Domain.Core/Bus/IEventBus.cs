@@ -1,12 +1,8 @@
-﻿using Project.Domain.Core.Commands;
-using Project.Domain.Core.Events;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Domain.Core.Commands;
+using Domain.Core.Events;
 using System.Threading.Tasks;
 
-namespace Project.Domain.Core.Bus
+namespace Domain.Core.Bus
 {
     public interface IEventBus
     {

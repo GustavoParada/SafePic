@@ -5,7 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Domain.Core\Project.Domain.Core.csproj" />
+    <PackageReference Include="MongoDB.Bson" Version="2.10.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Domain.Core\Domain.Core.csproj" />
+    <ProjectReference Include="..\Domain.MongoDB\Domain.MongoDB.csproj" />
   </ItemGroup>
 
   <ItemGroup>

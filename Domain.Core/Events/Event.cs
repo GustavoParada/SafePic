@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Project.Domain.Core.Events
+namespace Domain.Core.Events
 {
     public abstract class Event
     {

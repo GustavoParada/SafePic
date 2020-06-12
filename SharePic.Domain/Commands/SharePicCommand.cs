@@ -1,4 +1,4 @@
-﻿using Project.Domain.Core.Commands;
+﻿using Domain.Core.Commands;
 using System;
 
 namespace SharePic.Domain.Commands

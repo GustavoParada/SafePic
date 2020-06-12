@@ -1,23 +1,20 @@
-﻿using SharePic.Application.Interfaces;
-using SharePic.Application.Models;
+﻿using Domain.Core.Bus;
+using SharePic.Application.Interfaces;
 using SharePic.Domain.Commands;
 using SharePic.Domain.Interfaces;
 using SharePic.Domain.Models;
-using Project.Domain.Core.Bus;
-using System.Collections.Generic;
 using System;
+using System.Threading.Tasks;
 
 namespace SharePic.Application.Services
 {
     public class SharePicService : ISharePicService
     {
-        private readonly ISharePicRepository _sharePicRepository;
         private readonly IEventBus _bus;
 
-        public SharePicService(ISharePicRepository sharePicRepository, IEventBus bus)
+        public SharePicService(IEventBus bus)
 
         {
-            _sharePicRepository = sharePicRepository;
             _bus = bus;
         }
         //public IEnumerable<Account> GetAccounts()
@@ -25,11 +22,17 @@ namespace SharePic.Application.Services
         //   return _accountRepository.GetAccounts();
         //}
 
-        public void SharePic(Guid from, Guid to, string pic, int duration)
+        public async Task SharePic(Guid from, Guid to, string pic, int duration)
         {
-            var createdSharePicCommand = new CreateSharePicCommand(from, to, pic, duration);
-
-            _bus.SendCommand(createdSharePicCommand);
+            try
+            {
+                var createdSharePicCommand = new CreateSharePicCommand(from, to, pic, duration);
+                await _bus.SendCommand(createdSharePicCommand);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

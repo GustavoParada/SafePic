@@ -1,7 +1,10 @@
-﻿using Infra.Bus;
+﻿using Domain.Core.Bus;
+using Domain.MongoDB.Interfaces;
+using Domain.MongoDB.Repository;
+using Infra.Bus;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Project.Domain.Core.Bus;
 using SharePic.Application.Interfaces;
 using SharePic.Application.Services;
 using SharePic.Data.Repository;
@@ -17,6 +20,9 @@ namespace Infra.IoC
     {
         public static void RegisterServices(IServiceCollection services)
         {
+
+           
+
             //Domain Bus
             //var config = IConfiguration.GetSection("AppSettings").Get<AppSettings>();
             //services.AddTransient<AppSettings, config>();
@@ -25,7 +31,8 @@ namespace Infra.IoC
             services.AddSingleton<IRequestHandler<CreateSharePicCommand, bool>, SharePicCommandHandler>();
 
             ///Domain Bus
-            services.AddTransient<IEventBus, RabbitMQBus>(sp => {
+            services.AddTransient<IEventBus, RabbitMQBus>(sp =>
+            {
                 var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
                 return new RabbitMQBus(sp.GetService<IMediator>(), scopeFactory);
             });
@@ -44,6 +51,12 @@ namespace Infra.IoC
 
             //Data
             services.AddTransient<ISharePicRepository, PicRepository>();
+
+            //MongoRepository
+            services.AddTransient(typeof(IMongoRepository<>), typeof(MongoRepository<>));
+
+
+
         }
     }
 }

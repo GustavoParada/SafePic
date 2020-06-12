@@ -1,15 +1,31 @@
-﻿using SharePic.Domain.Interfaces;
+﻿using Domain.MongoDB.Interfaces;
+using SharePic.Domain.Interfaces;
 using SharePic.Domain.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace SharePic.Data.Repository
 {
     public class PicRepository : ISharePicRepository
     {
-        public void RegisterShare(SharedPic picShared)
+        private readonly IMongoRepository<SharedPic> _sharePicRepository;
+
+        public PicRepository(IMongoRepository<SharedPic> sharePicRepository)
         {
-            //grava no mongo
-            throw new NotImplementedException();
+            _sharePicRepository = sharePicRepository;
+        }
+
+        public async Task RegisterShare(SharedPic picShared)
+        {
+            try
+            {
+                //grava no mongo
+               await _sharePicRepository.InsertOneAsync(picShared);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
     }
 }

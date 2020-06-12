@@ -1,4 +1,4 @@
-﻿using Project.Domain.Core.Events;
+﻿using Domain.Core.Events;
 using System;
 
 namespace SharePic.Domain.Events

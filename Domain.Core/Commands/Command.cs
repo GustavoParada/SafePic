@@ -1,11 +1,7 @@
-﻿using Project.Domain.Core.Events;
+﻿using Domain.Core.Events;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Project.Domain.Core.Commands
+namespace Domain.Core.Commands
 {
     public abstract class Command : Message
     {
