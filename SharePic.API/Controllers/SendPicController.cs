@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using SharePic.Application.Interfaces;
-using SharePic.Application.Models;
-using SharePic.Domain.Models;
+﻿using Domain.Core.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SharePic.API.ViewModels;
-using System.Net.Mime;
-using Domain.Core.Entities;
+using SharePic.Application.Interfaces;
+using System;
+using System.Threading.Tasks;
 
 namespace SharePic.API.Controllers
 {
@@ -18,9 +14,13 @@ namespace SharePic.API.Controllers
     public class SharePicController : ControllerBase
     {
         private readonly ISharePicService _SharePicService;
+        private readonly ILogger<SharePicController> _logger;
 
-        public SharePicController(ISharePicService sharePicService)
+
+        public SharePicController(ISharePicService sharePicService, ILogger<SharePicController> logger)
         {
+            _logger = logger;
+            logger.LogWarning("injected");
             this._SharePicService = sharePicService;
         }
 
@@ -39,14 +39,19 @@ namespace SharePic.API.Controllers
         {
             try
             {
+                _logger.LogWarning("post called");
                 await _SharePicService.SharePic(model.From, model.To, model.Pic, model.Duration);
+
                 return Created(nameof(SharePicViewModel), model);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new HttpErrorResponse()
+                {
+                    Error = "Erro no servidor.",
+                    Trace = ex.Message
+                });
             }
-
         }
     }
 }

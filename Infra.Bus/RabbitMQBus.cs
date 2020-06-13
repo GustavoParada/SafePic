@@ -3,7 +3,6 @@ using Domain.Core.Commands;
 using Domain.Core.Entities;
 using Domain.Core.Events;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -23,8 +22,7 @@ namespace Infra.Bus
         private readonly Dictionary<string, List<Type>> _handlers;
         private readonly List<Type> _eventTypes;
         private readonly IServiceScopeFactory _serviceScopeFactory;
-
-        private RabbitMQSettings _rabbitMQSettings;
+        private readonly RabbitMQSettings _rabbitMQSettings;
 
         public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory, IOptions<RabbitMQSettings> options)
         {
@@ -42,28 +40,18 @@ namespace Infra.Bus
 
         public void Publish<T>(T @event) where T : Event
         {
-            //_rabbitMQSettings = new RabbitMQSettings()
-            //{
-            //    Host = "dupa.pt",
-            //    Password = "12345",
-            //    UserName = "userRabbit"
-            //};
             var factory = new ConnectionFactory() { HostName = _rabbitMQSettings.Host, UserName = _rabbitMQSettings.UserName, Password = _rabbitMQSettings.Password };
 
-            using (var connection = factory.CreateConnection())
-            {
-                using (var channel = connection.CreateModel())
-                {
-                    var eventName = @event.GetType().Name;
+            using var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
+            var eventName = @event.GetType().Name;
 
-                    channel.QueueDeclare(eventName, false, false, false, null);
+            channel.QueueDeclare(eventName, false, false, false, null);
 
-                    var message = JsonConvert.SerializeObject(@event);
-                    var body = Encoding.UTF8.GetBytes(message);
+            var message = JsonConvert.SerializeObject(@event);
+            var body = Encoding.UTF8.GetBytes(message);
 
-                    channel.BasicPublish("", eventName, null, body);
-                }
-            }
+            channel.BasicPublish("", eventName, null, body);
         }
 
         public void Subscribe<T, TH>()
@@ -96,13 +84,7 @@ namespace Infra.Bus
 
         private void StartBasicConsume<T>() where T : Event
         {
-            var factory = new ConnectionFactory()
-            {
-                HostName = "dupa.com.br",
-                UserName = "userRabbit",
-                Password = "12345",
-                DispatchConsumersAsync = true
-            };
+            var factory = new ConnectionFactory() { HostName = _rabbitMQSettings.Host, UserName = _rabbitMQSettings.UserName, Password = _rabbitMQSettings.Password };
 
             var connection = factory.CreateConnection();
             var channel = connection.CreateModel();
@@ -129,7 +111,6 @@ namespace Infra.Bus
             }
             catch
             {
-
                 throw;
             }
         }
@@ -138,22 +119,20 @@ namespace Infra.Bus
         {
             if (_handlers.ContainsKey(eventName))
             {
-                using (var scope = _serviceScopeFactory.CreateScope())
+                using var scope = _serviceScopeFactory.CreateScope();
+                var subscriptions = _handlers[eventName];
+                foreach (var subscription in subscriptions)
                 {
-                    var subscriptions = _handlers[eventName];
-                    foreach (var subscription in subscriptions)
-                    {
-                        var handler = scope.ServiceProvider.GetService(subscription);
+                    var handler = scope.ServiceProvider.GetService(subscription);
 
-                        if (handler == null)
-                            continue;
+                    if (handler == null)
+                        continue;
 
-                        var eventType = _eventTypes.SingleOrDefault(t => t.Name == eventName);
-                        var @event = JsonConvert.DeserializeObject(message, eventType);
-                        var concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
+                    var eventType = _eventTypes.SingleOrDefault(t => t.Name == eventName);
+                    var @event = JsonConvert.DeserializeObject(message, eventType);
+                    var concreteType = typeof(IEventHandler<>).MakeGenericType(eventType);
 
-                        await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { @event });
-                    }
+                    await (Task)concreteType.GetMethod("Handle").Invoke(handler, new object[] { @event });
                 }
             }
         }

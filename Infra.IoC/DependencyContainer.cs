@@ -4,7 +4,6 @@ using Domain.MongoDB.Interfaces;
 using Domain.MongoDB.Repository;
 using Infra.Bus;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using SharePic.Application.Interfaces;
@@ -12,7 +11,6 @@ using SharePic.Application.Services;
 using SharePic.Data.Repository;
 using SharePic.Domain.CommandHandlers;
 using SharePic.Domain.Commands;
-using SharePic.Domain.EventHandlers;
 using SharePic.Domain.Events;
 using SharePic.Domain.Interfaces;
 
@@ -40,10 +38,10 @@ namespace Infra.IoC
             });
 
             //Subscriptions
-            services.AddTransient<SharePicEventHandler>();
+            //services.AddTransient<SharePicEventHandler>();
 
             //Domains Events
-            services.AddTransient<IEventHandler<SharePicCreatedEvent>, SharePicEventHandler>();
+            //services.AddTransient<IEventHandler<SharePicCreatedEvent>, SharePicEventHandler>();
 
             //Application Services 
             services.AddTransient<ISharePicService, SharePicService>();

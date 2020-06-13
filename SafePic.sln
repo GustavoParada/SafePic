@@ -55,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetPic.Domain", "GetPic.Dom
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Core", "Domain.Core\Domain.Core.csproj", "{7E8E3092-F0E6-4C61-A869-AE87139389C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.MongoDB", "Domain.MongoDB\Domain.MongoDB.csproj", "{6A8F99D6-8AF8-49BD-8441-1BDFF320740A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.MongoDB", "Domain.MongoDB\Domain.MongoDB.csproj", "{6A8F99D6-8AF8-49BD-8441-1BDFF320740A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
