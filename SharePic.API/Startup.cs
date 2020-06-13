@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
@@ -24,19 +25,6 @@ namespace SharePic.API
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<BankingDbContext>(options =>
-            //{
-            //    options.UseSqlServer(Configuration.GetConnectionString("BankingDbConnection"));
-            //}
-            //);
-
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
-
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new OpenApiInfo { Title = "SafePic Service", Version = "v1" });
-            //});
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
@@ -57,15 +45,11 @@ namespace SharePic.API
                         Url = new Uri("https://example.com/license"),
                     }
                 });
-
-                services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
-                services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQSettings"));
-                services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings"));
-
-                services.AddSingleton<IMongoDbSettings>(serviceProvider =>
-                    serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value);
-
             });
+
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQSettings"));
+            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings"));
 
             services.AddMediatR(typeof(Startup));
             services.AddControllers();
@@ -76,11 +60,11 @@ namespace SharePic.API
         private static void RegisterServices(IServiceCollection services)
         {
             DependencyContainer.RegisterServices(services);
-            
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

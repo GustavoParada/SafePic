@@ -1,6 +1,7 @@
 ﻿using Domain.Core.Entities;
 using Domain.MongoDB.Attributes;
 using Domain.MongoDB.Interfaces;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -17,19 +18,9 @@ namespace Domain.MongoDB.Repository
     {
         private readonly IMongoCollection<TDocument> _collection;
 
-        public MongoRepository(IMongoDbSettings settings)
+        public MongoRepository(IOptions<MongoDbSettings> options)
         {
-            var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
-            _collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
-        }
-
-        public MongoRepository()
-        {
-            var settings = new MongoDbSettings()
-            {
-                ConnectionString = "mongodb://user:us3rt3s73@dupa.pt:27017/?authSource=SafePic",
-                DatabaseName = "SafePic"
-            };
+            var settings = options.Value;
 
             var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));

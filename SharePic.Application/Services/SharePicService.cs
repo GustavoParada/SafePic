@@ -1,8 +1,6 @@
 ﻿using Domain.Core.Bus;
 using SharePic.Application.Interfaces;
 using SharePic.Domain.Commands;
-using SharePic.Domain.Interfaces;
-using SharePic.Domain.Models;
 using System;
 using System.Threading.Tasks;
 

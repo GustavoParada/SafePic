@@ -26,12 +26,13 @@ namespace Infra.Bus
 
         private RabbitMQSettings _rabbitMQSettings;
 
-        public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory)
+        public RabbitMQBus(IMediator mediator, IServiceScopeFactory serviceScopeFactory, IOptions<RabbitMQSettings> options)
         {
             _mediator = mediator;
             _handlers = new Dictionary<string, List<Type>>();
             _eventTypes = new List<Type>();
             _serviceScopeFactory = serviceScopeFactory;
+            _rabbitMQSettings = options.Value;
         }
 
         public Task SendCommand<T>(T command) where T : Command
@@ -41,19 +42,18 @@ namespace Infra.Bus
 
         public void Publish<T>(T @event) where T : Event
         {
-            _rabbitMQSettings = new RabbitMQSettings()
-            {
-                Host = "dupa.pt",
-                Password = "12345",
-                UserName = "userRabbit"
-            };
+            //_rabbitMQSettings = new RabbitMQSettings()
+            //{
+            //    Host = "dupa.pt",
+            //    Password = "12345",
+            //    UserName = "userRabbit"
+            //};
             var factory = new ConnectionFactory() { HostName = _rabbitMQSettings.Host, UserName = _rabbitMQSettings.UserName, Password = _rabbitMQSettings.Password };
 
             using (var connection = factory.CreateConnection())
             {
                 using (var channel = connection.CreateModel())
                 {
-
                     var eventName = @event.GetType().Name;
 
                     channel.QueueDeclare(eventName, false, false, false, null);

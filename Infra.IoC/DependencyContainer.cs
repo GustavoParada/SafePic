@@ -1,10 +1,12 @@
 ﻿using Domain.Core.Bus;
+using Domain.Core.Entities;
 using Domain.MongoDB.Interfaces;
 using Domain.MongoDB.Repository;
 using Infra.Bus;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using SharePic.Application.Interfaces;
 using SharePic.Application.Services;
 using SharePic.Data.Repository;
@@ -21,7 +23,7 @@ namespace Infra.IoC
         public static void RegisterServices(IServiceCollection services)
         {
 
-           
+
 
             //Domain Bus
             //var config = IConfiguration.GetSection("AppSettings").Get<AppSettings>();
@@ -34,7 +36,7 @@ namespace Infra.IoC
             services.AddTransient<IEventBus, RabbitMQBus>(sp =>
             {
                 var scopeFactory = sp.GetRequiredService<IServiceScopeFactory>();
-                return new RabbitMQBus(sp.GetService<IMediator>(), scopeFactory);
+                return new RabbitMQBus(sp.GetService<IMediator>(), scopeFactory, sp.GetService<IOptions<RabbitMQSettings>>());
             });
 
             //Subscriptions
