@@ -45,11 +45,24 @@ namespace Domain.MongoDB.Repository
             return _collection.Find(filterExpression).ToEnumerable();
         }
 
+        public virtual async Task<IEnumerable<TDocument>> FilterByAsync(
+           Expression<Func<TDocument, bool>> filterExpression)
+        {
+            return await _collection.Find(filterExpression).ToListAsync();
+        }
+
         public virtual IEnumerable<TProjected> FilterBy<TProjected>(
             Expression<Func<TDocument, bool>> filterExpression,
             Expression<Func<TDocument, TProjected>> projectionExpression)
         {
             return _collection.Find(filterExpression).Project(projectionExpression).ToEnumerable();
+        }
+
+        public virtual async Task<IEnumerable<TProjected>> FilterByAsync<TProjected>(
+           Expression<Func<TDocument, bool>> filterExpression,
+           Expression<Func<TDocument, TProjected>> projectionExpression)
+        {
+            return await _collection.Find(filterExpression).Project(projectionExpression).ToListAsync();
         }
 
         public virtual TDocument FindOne(Expression<Func<TDocument, bool>> filterExpression)

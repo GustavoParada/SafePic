@@ -2,6 +2,7 @@
 using SharePic.Domain.Interfaces;
 using SharePic.Domain.Models;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SharePic.Data.Repository
@@ -21,6 +22,19 @@ namespace SharePic.Data.Repository
             {
                 //grava no mongo
                await _sharePicRepository.InsertOneAsync(picShared);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<IEnumerable<SharedPic>> GetSharedList(Guid userId, DateTime exporationDate)
+        {
+            try
+            {
+                //grava no mongo
+                return await _sharePicRepository.FilterByAsync(p => p.ToUser == userId);// && p.ExpirationDate > DateTime.Now);
             }
             catch (Exception ex)
             {

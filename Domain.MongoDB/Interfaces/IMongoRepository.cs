@@ -13,7 +13,14 @@ namespace Domain.MongoDB.Interfaces
         IEnumerable<TDocument> FilterBy(
             Expression<Func<TDocument, bool>> filterExpression);
 
+        Task<IEnumerable<TDocument>> FilterByAsync(
+          Expression<Func<TDocument, bool>> filterExpression);
+
         IEnumerable<TProjected> FilterBy<TProjected>(
+            Expression<Func<TDocument, bool>> filterExpression,
+            Expression<Func<TDocument, TProjected>> projectionExpression);
+
+        Task<IEnumerable<TProjected>> FilterByAsync<TProjected>(
             Expression<Func<TDocument, bool>> filterExpression,
             Expression<Func<TDocument, TProjected>> projectionExpression);
 
@@ -32,7 +39,7 @@ namespace Domain.MongoDB.Interfaces
         void InsertMany(ICollection<TDocument> documents);
 
         Task InsertManyAsync(ICollection<TDocument> documents);
-
+       
         void ReplaceOne(TDocument document);
 
         Task ReplaceOneAsync(TDocument document);
