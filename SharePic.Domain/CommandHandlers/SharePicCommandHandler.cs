@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SharePic.Domain.CommandHandlers
 {
-    public class SharePicCommandHandler : IRequestHandler<CreateSharePicCommand, bool>
+    public class SharePicCommandHandler : IRequestHandler<CreateSharePicCommand, bool>, IRequestHandler<CreateSharePicDeleteCommand, bool>
     {
         private readonly IEventBus _bus;
         private readonly ISharePicRepository _sharePicRepository;
@@ -29,6 +29,19 @@ namespace SharePic.Domain.CommandHandlers
                 await _sharePicRepository.RegisterShare(sharedPic);
 
                 _bus.Publish(new SharePicCreatedEvent(request.From, request.To, request.Pic, request.Duration));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> Handle(CreateSharePicDeleteCommand request, CancellationToken cancellationToken)
+        {
+            try
+            {
+                await _sharePicRepository.DeleteShare(request.Id);
             }
             catch (Exception ex)
             {

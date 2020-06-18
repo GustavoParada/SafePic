@@ -41,5 +41,17 @@ namespace SharePic.Data.Repository
                 throw ex;
             }
         }
+
+        public async Task DeleteShare(Guid id)
+        {
+            try
+            {
+                await _sharePicRepository.DeleteByIdAsync(id.ToString());
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

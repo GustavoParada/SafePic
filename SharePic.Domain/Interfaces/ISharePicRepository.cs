@@ -9,5 +9,6 @@ namespace SharePic.Domain.Interfaces
     {
         Task<IEnumerable<SharedPic>> GetSharedList(Guid userId, DateTime exporationDate);
         Task RegisterShare(SharedPic picShared);
+        Task DeleteShare(Guid id);
     }
 }

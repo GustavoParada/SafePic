@@ -8,7 +8,7 @@ namespace Domain.MongoDB.Interfaces
     {
         [BsonId]
         [BsonRepresentation(BsonType.String)]
-        ObjectId Id { get; set; }
+        Guid Id { get; set; }
 
         DateTime CreatedAt { get; }
     }

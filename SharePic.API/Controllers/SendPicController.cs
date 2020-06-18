@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using MongoDB.Bson;
 using SharePic.API.ViewModels;
 using SharePic.Application.Interfaces;
 using SharePic.Domain.Models;
@@ -24,7 +25,6 @@ namespace SharePic.API.Controllers
         public SharePicController(ISharePicService sharePicService, ILogger<SharePicController> logger)
         {
             _logger = logger;
-            logger.LogWarning("injected");
             this._SharePicService = sharePicService;
         }
 
@@ -82,6 +82,25 @@ namespace SharePic.API.Controllers
                 return StatusCode(500, new HttpErrorResponse()
                 {
                     Error = "Erro no servidor.",
+                    Trace = ex.Message
+                });
+            }
+        }
+
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [HttpDelete]
+        public async Task<ActionResult> Delete(Guid id)
+        {
+            try
+            {
+                await _SharePicService.DeleteShared(id);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new HttpErrorResponse()
+                {
                     Trace = ex.Message
                 });
             }

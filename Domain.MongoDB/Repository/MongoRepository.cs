@@ -2,13 +2,11 @@
 using Domain.MongoDB.Attributes;
 using Domain.MongoDB.Interfaces;
 using Microsoft.Extensions.Options;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.MongoDB.Repository
@@ -77,8 +75,8 @@ namespace Domain.MongoDB.Repository
 
         public virtual TDocument FindById(string id)
         {
-            var objectId = new ObjectId(id);
-            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
+            var guid = new Guid(id);
+            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, guid);
             return _collection.Find(filter).SingleOrDefault();
         }
 
@@ -86,8 +84,8 @@ namespace Domain.MongoDB.Repository
         {
             return Task.Run(() =>
             {
-                var objectId = new ObjectId(id);
-                var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
+                var guid = new Guid(id);
+                var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, guid);
                 return _collection.Find(filter).SingleOrDefaultAsync();
             });
         }
@@ -138,8 +136,8 @@ namespace Domain.MongoDB.Repository
 
         public void DeleteById(string id)
         {
-            var objectId = new ObjectId(id);
-            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
+            var guid = new Guid(id);
+            var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, guid);
             _collection.FindOneAndDelete(filter);
         }
 
@@ -147,8 +145,8 @@ namespace Domain.MongoDB.Repository
         {
             return Task.Run(() =>
             {
-                var objectId = new ObjectId(id);
-                var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, objectId);
+                var guid = new Guid(id);
+                var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, guid);
                 _collection.FindOneAndDeleteAsync(filter);
             });
         }
