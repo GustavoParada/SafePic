@@ -29,6 +29,8 @@ namespace Infra.IoC
 
             //Domain SharePic Commands
             services.AddSingleton<IRequestHandler<CreateSharePicCommand, bool>, SharePicCommandHandler>();
+            services.AddSingleton<IRequestHandler<CreateSharePicDeleteCommand, bool>, SharePicCommandHandler>();
+
 
             ///Domain Bus
             services.AddTransient<IEventBus, RabbitMQBus>(sp =>

@@ -37,11 +37,12 @@ namespace SharePic.Application.Services
                     using MemoryStream ms = new MemoryStream(imageInBytes);
                     Image pic = Image.FromStream(ms);
 
-                    using Font font = new Font("ArialBlack", pic.Width / safeText.Length, FontStyle.Bold);
-                    var safedPic = ImageHelper.Watermak(pic, safeText, font);
+                    using Font font = new Font("Arial Black", pic.Width / safeText.Length, FontStyle.Bold);
+                    var safedPic = ImageHelper.Watermark(pic, safeText, font, 30);
 
                     using MemoryStream m = new MemoryStream();
                     safedPic.Save(m, safedPic.RawFormat);
+
                     byte[] imageBytes = m.ToArray();
                     var base64String = Convert.ToBase64String(imageBytes);
                     picFromDataBase.Base64 = base64String;
@@ -84,7 +85,7 @@ namespace SharePic.Application.Services
 
     public static class ImageHelper
     {
-        public static Image Watermak(Image image, string text, Font font)
+        public static Image Watermark(Image image, string text, Font font, int opacity)
         {
             using Graphics gr = Graphics.FromImage(image);
             using (StringFormat string_format = new StringFormat())
@@ -98,15 +99,16 @@ namespace SharePic.Application.Services
                 for (int i = 0; i < 7; i++)
                 {
                     string txt = text; //+ opacity.ToString();
-                    using (Brush brush = new SolidBrush(Color.FromArgb(30, 0, 0, 0)))
+                    using (Brush brush = new SolidBrush(Color.FromArgb(opacity, 0, 0, 0)))
                     {
                         gr.DrawString(txt, font, brush, x, y, string_format);
                     }
-                    using (Brush brush = new SolidBrush(Color.FromArgb(20, 255, 255, 255)))
+                    using (Brush brush = new SolidBrush(Color.FromArgb(opacity, 255, 255, 255)))
                     {
                         gr.DrawString(txt, font, brush, x - 2, y - 2, string_format);
                     }
                     y += dy;
+
                 }
             }
 

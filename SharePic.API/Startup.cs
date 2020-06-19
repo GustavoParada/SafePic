@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System;
 
@@ -60,7 +59,6 @@ namespace SharePic.API
         private static void RegisterServices(IServiceCollection services)
         {
             DependencyContainer.RegisterServices(services);
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
